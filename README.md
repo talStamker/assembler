@@ -206,9 +206,155 @@ head-list of label
  line- the corrent line
   ic-instruction conter
  num of line-the corrent line in am file
- 
+###linkedList.c
+This class deals with a linked list of labels
+#### Functions:
+##### Node *newNode(char *insertName, char *insertText, char *insertType, char insertWord[256][11])
+This function generate node function
+##### Node *insertToStart(Node *head, char *insertName, char *insertText, char *insertType, char insertWord[256][11])
+This function puts at the beginning of the list
+##### Node *insertToEnd(Node *head, char *insertName, char *insertText, char *insertType, char insertWord[256][11])
+This function puts at the end of the list
+##### int length(Node *head)
+This function returning the length of the list 
+##### Node *searchByName(Node *head, char *nodeName)
+This function returns the named node (nodeName)
+##### bool isExist(Node *head, char *nodeName)
+This function checks if a node with the name is found
+##### Node *insertALLDataCode(Node *allL, Node *head)
+This function puts S in the general list of labels,
+it will put in all the labels that have the potential to be ".extern",
+ that is, anyone who is not already extern or entry.
+ That is, only labels assigned to them in the current encoding file. 
+##### Node *insertAllEntrylist(Node *list1, Node *list2)
+This function inserts a list at the end of another list,
+ so that in each first and second pass we consider the fact that the labels on which
+ the extern operation was performed are already in the label list of head
+##### void destroy(Node *head)
+This function free alll the node
+### teachingSentence.c
+This department handles action sentences,
+ checks whether they are correct and to what extent, and codes them
+#### Functions
+##### int encodeAction(int numOfOprand, char words[256][11], char *oprand1, char *oprand2, int IC, bool immediateS, bool immediateD, bool labelS, bool labelD, bool registerS, bool registerD, bool accessToListS, bool accessToListD)
+This function encodes simple operations with 2 operands or with 1 operand.
+variable:
+numOfOprand-Number of operands in the instruction statement
+words- The general array of the entire am file.
+operand1-the first operand
+oprand2- the second operand
+ic-instruction conter
+immediateS-Checks if sorce is an immediate address
+immediateD-Checks if destination is an immediate address
+labelS-Checks if sorce is a direct address
+labelD-Checks if destination is a direct address
+registerS-Checks if sorce is an direct register address
+registerD-Checks if destination is adirect register address
+accessToListS-Checks if sorce is an access to list address
+accessToListD-Checks if destination is an an access to list address
+##### int isCorrectAction(char words[256][11], char *line, char *command_type, int numOfLine, int IC)
+This function checks the correctness of instruction sentences,
+ and encodes them if they are correct
+ words-array of words in first run.
+ line- line in am file
+ commandtype-action type
+ num of line- num of corrent line
+ ic-instruction conter 
+### utils.c
+#### Functions:
+##### bool isANum(char *st)
+This function checks that a number is indeed correct,
+and takes into account that it can start with a plus or minus
+##### bool isARegister(char *name)
+This function checks that the received register is valid
+##### bool isALabel(char *label)
+This function checks that the label is syntactically correct
+##### bool isImmediate(char *name)
+This function checks whether the address is immediate
+##### bool isAccessToList(char *name)
+This function checks that it is a label and an index 
+##### bool isAComment(char *name)
+This function checks that it is a comment sentence
+##### bool isADataStorage(char *data_storage)
+This function checks
+whether the string it received is the instruction to store data
+##### int getOpcode(char *name)
+This function checks whether the string received is an instruction
+and if so returns the opcode of the instruction
+##### bool isCommaAtTheBeginning(char *directive)
+This function checks if there is a comma at the beginning.
+##### bool isCommaAtTheEnd(char *directive)
+This function checks if there is a comma at the end.
+##### bool space(char st[81])
+This function checks whether the entire string is only spaces.
+##### bool isNonOperand(int opcode)
+This function checks whether the command with this opcode has no operands.
+##### bool isOneOperand(int opcode)
+This function checks whether the command with this opcode has one operands
+##### bool isTwoOperand(int opcode)
+This function checks whether the command with this opcode has two operands
 ### preAssembler.c 
 This file pass the source file and look for macro lines and save them in file source.am
 #### Functions:
 ##### void makeAmFile(char *name)
 This function accepts a source file and interprets the macro in the source file
+### firstRun.c
+#### Functions:
+##### Node *fRun(char *name, Node *head, char words[256][11], int *numOfWord, int *DC)
+This function performs a complete first pass according to the skeletal algorithm that appeared in the file.
+It will update everything that can be translated in the first pass,
+i.e. coded instruction sentences, coded instruction sentences without label addresses,
+and the full list of words will be updated in words
+variable:
+name- am file name
+head- list of label
+words- array of words
+dc-Data-Counter updated in first run.c
+### secondRun.c
+#### Functions:
+##### Node *insertAllEntLabel(Node *head)
+This function insert all entry lable to head
+##### bool isCorrectEntry(Node *head, char *line, Node **entryNode, int numOfLine)
+This function chaeck if entry sentence is correct
+variable:
+head-list of label of source file
+line- entry line
+entryNode-pointer to *node if the entry line will be correct it will cut the node thar need to entry
+num of line- cuurrent line
+##### void markEntry(Node *entryNode)
+This function mark all the label in head that need to extern and update entlabel for the other files
+##### void writeObFile(char words[256][11], char *name, int dc, int ic)
+This function receives a list of words and writes them to a file of type ob
+ according to their value in base32
+  words-The label list
+name-am file name
+  ic-instruction conter
+dc-Data counter
+##### void writeEntFile(Node *head, char *name)
+A function that writes all labels of type Entry to ent file
+head- list of label
+name- am name file
+##### void writeExtFie(Node *head, char *name)
+A function that writes all labels of type Extern to ext file
+head- list of label
+name- am name file
+##### bool isExistInSourceFile(Node *head, char *line, int numOfLine)
+This function check if the label that in source file write ti extern it is defined in source file
+##### Node *sRun(Node *head, char words[256][11], char *name, int dc)
+This function performs an algorithm according to the shield algorithm of the second pass
+head- list of labels
+words- the entier words
+name - am file
+dc-Data-Counter updated in first run.c
+##### void destroyEnt()
+This function destroy entLabel
+##### Node *searchFromAllLabel(char *name)
+This function return the node that have this name
+##### void destroyAllLabel()
+This function destroy the labels in allLabel
+### main.c
+#### Functions:
+void clean(char words[256][11], int numOfWords)
+This function clean words
+##### int main(int argc, char *argv[])
+This function is the main function that pre Assembler run and first run and second run
